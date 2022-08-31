@@ -1,0 +1,14 @@
+endpoints:
+    - path: /api/webhook
+      targetUrl: http://argocd-server.argocd.svc.cluster.local
+      replacements:
+          - from: aaa
+            to: bbb
+
+    - path: /test
+      targetUrl: https://google.com/search
+      replacements:
+          - from: google
+            to: DuckDuckLetsGo
+          - from: Google
+            to: DuckDuckLetsGo
