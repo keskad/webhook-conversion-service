@@ -11,12 +11,27 @@ The case was in communication between Gitlab and ArgoCD over the internal networ
 - Multiple webhooks/endpoints support
 - Configuration in a YAML file
 - Non-root, distroless container image
+- Stateless service, could be running easily in HA mode by simply bumping the replicas count
 
 Usage
 -----
 
 ```bash
 webhook-conversion-service --config ./example-config.yaml --listen ":8080"
+```
+
+Resources requirements
+----------------------
+
+Proxy is very lightweight, probably after some time you would forget that it exists at all.
+
+```yaml
+limits:
+    cpu: 100m
+    memory: 32Mi
+requests:
+    cpu: 50m
+    memory: 16Mi
 ```
 
 Security
@@ -28,3 +43,37 @@ Please be aware of a fact, that potential attacker could access your upstream se
 **Advices:**
 - Control who has access to the service using firewall rules or ingress network policy in Kubernetes
 - If its possible use only for internal services
+
+**Example Network Policy:**
+
+```yaml
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-only-gitlab-to-argocd
+  namespace: argocd
+spec:
+    podSelector:
+        matchLabels:
+            app.kubernetes.io/instance: webhooks-conversion
+            app.kubernetes.io/name: webhooks-conversion
+    policyTypes:
+        - Ingress
+        - Egress
+    ingress:
+        - namespaceSelector:
+              matchLabels:
+                  name: gitlab
+          ports:
+              - protocol: TCP
+                port: 8080
+    egress:
+        - to:
+            - namespaceSelector:
+                  matchLabels:
+                      name: argocd
+          ports:
+              - port: 80
+                protocol: TCP
+```
