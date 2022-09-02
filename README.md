@@ -20,6 +20,25 @@ Usage
 webhook-conversion-service --config ./example-config.yaml --listen ":8080"
 ```
 
+```yaml
+endpoints:
+    # Example for ArgoCD
+    - path: /api/webhook
+      targetUrl: http://argocd-server.argocd.svc.cluster.local
+      replacements:
+          - from: gitlab.example.org
+            to: my-instance.gitlab.svc.cluster.local
+
+    # just for testing
+    - path: /test
+      targetUrl: https://google.com/search
+      replacements:
+          - from: google
+            to: DuckDuckLetsGo
+          - from: Google
+            to: DuckDuckLetsGo
+```
+
 Resources requirements
 ----------------------
 

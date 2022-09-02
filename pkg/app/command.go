@@ -17,7 +17,7 @@ func NewCommand() *cobra.Command {
 		Use:   "webhook-conversion-service",
 		Short: "Listen for incoming webhooks and perform conversions",
 		Run: func(command *cobra.Command, args []string) {
-			if err := Main(params.ConfigPath, params.ListenOn); err != nil {
+			if err := Main(params.ConfigPath, params.ListenOn, HttpServer{}); err != nil {
 				logrus.Fatal(err)
 			}
 			return

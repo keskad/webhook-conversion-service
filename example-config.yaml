@@ -1,10 +1,12 @@
 endpoints:
+    # Example for ArgoCD
     - path: /api/webhook
       targetUrl: http://argocd-server.argocd.svc.cluster.local
       replacements:
-          - from: aaa
-            to: bbb
+          - from: gitlab.example.org
+            to: my-instance.gitlab.svc.cluster.local
 
+    # just for testing
     - path: /test
       targetUrl: https://google.com/search
       replacements:

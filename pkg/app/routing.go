@@ -34,13 +34,13 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 		req.PostForm = incomingReq.PostForm
 
 		if err != nil {
-			fmt.Fprintf(w, "Cannot proxy request: %s", err.Error())
+			_, _ = fmt.Fprintf(w, "Cannot proxy request: %s", err.Error())
 			return
 		}
 
 		response, pErr := c.Do(req)
 		if pErr != nil {
-			fmt.Fprintf(w, "Cannot proxy request: %s", pErr.Error())
+			_, _ = fmt.Fprintf(w, "Cannot proxy request: %s", pErr.Error())
 			return
 		}
 
@@ -56,7 +56,7 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 		// body
 		_, wErr := io.Copy(w, createMutator(&endpoint, response.Body))
 		if wErr != nil {
-			fmt.Fprintf(w, "Cannot read response body: %s", wErr.Error())
+			_, _ = fmt.Fprintf(w, "Cannot read response body: %s", wErr.Error())
 		}
 	}
 }

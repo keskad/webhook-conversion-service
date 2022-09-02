@@ -1,8 +1,6 @@
 package app
 
-import "net/http"
-
-func Main(configPath string, listenOn string) error {
+func Main(configPath string, listenOn string, http Server) error {
 	config, err := LoadConfigurationFromFile(configPath)
 	if err != nil {
 		return err
