@@ -23,7 +23,7 @@ webhook-conversion-service --config ./example-config.yaml --listen ":8080"
 Resources requirements
 ----------------------
 
-Proxy is very lightweight, probably after some time you would forget that it exists at all.
+The reverse proxy is very lightweight, probably after some time you would forget that it exists at all.
 
 ```yaml
 limits:
