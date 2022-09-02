@@ -10,3 +10,7 @@ build:
 .PHONY: coverage
 coverage:
 	go test -v ./... -covermode=count -coverprofile=coverage.out
+
+.PHONY: image
+image:
+	docker build . -t webhook-conversion-service:latest
