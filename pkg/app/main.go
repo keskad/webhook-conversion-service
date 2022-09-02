@@ -2,7 +2,7 @@ package app
 
 import "net/http"
 
-func Main(configPath string) error {
+func Main(configPath string, listenOn string) error {
 	config, err := LoadConfigurationFromFile(configPath)
 	if err != nil {
 		return err
@@ -13,5 +13,5 @@ func Main(configPath string) error {
 		http.HandleFunc(path, route)
 	}
 
-	return http.ListenAndServe(":8090", nil)
+	return http.ListenAndServe(listenOn, nil)
 }

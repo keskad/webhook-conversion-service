@@ -10,3 +10,10 @@ The case was in communication between Gitlab and ArgoCD over the internal networ
 - Replacing text in body of a request and response
 - Multiple webhooks/endpoints support
 - Configuration in a YAML file
+
+Usage
+-----
+
+```bash
+webhook-conversion-service --config ./example-config.yaml --listen ":8080"
+```
