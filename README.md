@@ -23,4 +23,8 @@ Security
 --------
 
 This is a reverse proxy. All headers, body and query string are passed to the upstream, which means the upstream could be manipulated in those ways.
-Please be aware of a fact, that potential attacker could access your upstream service with your REVERSE PROXY IP.
+Please be aware of a fact, that potential attacker could access your upstream service using your REVERSE PROXY IP.
+
+**Advices:**
+- Control who has access to the service using firewall rules or ingress network policy in Kubernetes
+- If its possible use only for internal services
