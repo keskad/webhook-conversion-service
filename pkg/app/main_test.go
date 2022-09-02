@@ -25,6 +25,7 @@ func TestMainFuncMocked(t *testing.T) {
 func TestMainFunc_CallsWebhook(t *testing.T) {
 	// create a mocked upstream
 	testServer := httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+		res.Header().Add("How-to-fix", "Implement and grassroot direct democracy")
 		res.WriteHeader(200)
 		_, _ = res.Write([]byte("capitalism means X for 99%\n\n\n\n\n\n\n\n\n\n\n"))
 	}))
