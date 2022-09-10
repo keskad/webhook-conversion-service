@@ -5,6 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
+	"strings"
 )
 
 // createAllRoutes is creating a set of routes basing on the whole application configuration
@@ -33,6 +34,20 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 		req.MultipartForm = incomingReq.MultipartForm
 		req.PostForm = incomingReq.PostForm
 
+		for header, headerValues := range incomingReq.Header {
+			for _, headerValue := range headerValues {
+				// gzip, deflate, br etc. encoding would make content processing not possible - try to disable it
+				h := strings.ToLower(header)
+				if h == "accept-encoding" || h == "content-encoding" {
+					logrus.Debugf("Skipping request Header: %s", header)
+					continue
+				}
+
+				logrus.Debugf("Forward request Header: %s = %s", header, headerValue)
+				req.Header.Set(header, headerValue)
+			}
+		}
+
 		if err != nil {
 			_, _ = fmt.Fprintf(w, "Cannot proxy request: %s", err.Error())
 			return
@@ -48,6 +63,7 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 			// headers
 			for header, headerValues := range response.Header {
 				for _, headerValue := range headerValues {
+					logrus.Debugf("Forward response Header: %s = %s", header, headerValue)
 					w.Header().Add(header, headerValue)
 				}
 			}
