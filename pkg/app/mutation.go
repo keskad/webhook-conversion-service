@@ -2,6 +2,7 @@ package app
 
 import (
 	"bytes"
+	"github.com/sirupsen/logrus"
 	"io"
 )
 
@@ -16,6 +17,12 @@ func (m StreamMutator) Read(p []byte) (int, error) {
 
 	// todo: create a more advanced replacing that would consider replacing line-by-line
 	buff = m.replace(buff)
+
+	if logrus.IsLevelEnabled(logrus.DebugLevel) {
+		logrus.Debugln("read()")
+		logrus.Debugln(string(buff))
+	}
+
 	copy(p, buff)
 
 	return n, err
