@@ -28,6 +28,7 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 		c := http.Client{}
 		c.Timeout = endpoint.getTimeout()
 
+		logrus.Debug("Creating request with incomingReq.Body as body")
 		req, err := http.NewRequest(incomingReq.Method, endpoint.TargetUrl+"?"+incomingReq.URL.RawQuery, createMutator(&endpoint, incomingReq.Body))
 		logrus.Infof("Creating request to '%s'", endpoint.TargetUrl)
 		req.Form = incomingReq.Form
@@ -38,7 +39,7 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 			for _, headerValue := range headerValues {
 				// gzip, deflate, br etc. encoding would make content processing not possible - try to disable it
 				h := strings.ToLower(header)
-				if h == "accept-encoding" || h == "content-encoding" {
+				if h == "accept-encoding" || h == "content-encoding" || h == "content-length" {
 					logrus.Debugf("Skipping request Header: %s", header)
 					continue
 				}
@@ -63,6 +64,13 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 			// headers
 			for header, headerValues := range response.Header {
 				for _, headerValue := range headerValues {
+					// we are modifying content, so the content-length header must be wiped and rewritten again
+					// it will be automatically generated
+					if strings.ToLower(header) == "content-length" {
+						logrus.Debug("Skipping content-length header")
+						continue
+					}
+
 					logrus.Debugf("Forward response Header: %s = %s", header, headerValue)
 					w.Header().Add(header, headerValue)
 				}
@@ -70,6 +78,7 @@ func createRoute(endpoint Endpoint) func(w http.ResponseWriter, req *http.Reques
 		}
 
 		// body
+		logrus.Debug("Copying response.Body")
 		_, wErr := io.Copy(w, createMutator(&endpoint, response.Body))
 		if wErr != nil {
 			_, _ = fmt.Fprintf(w, "Cannot read response body: %s", wErr.Error())

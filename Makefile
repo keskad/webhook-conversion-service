@@ -14,3 +14,7 @@ coverage:
 .PHONY: image
 image:
 	docker build . -t webhook-conversion-service:latest
+
+.PHONY: test_run
+test_run:
+	./.build/webhook-conversion-service -c ./example-config.yaml --debug
